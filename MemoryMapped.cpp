@@ -147,8 +147,6 @@ bool MemoryMapped::open(const std::string& filename, size_t mappedBytes, CacheHi
 /// close file
 void MemoryMapped::close()
 {
-  _filesize = 0;
-
   // kill pointer
   if (_mappedView)
   {
@@ -178,6 +176,8 @@ void MemoryMapped::close()
 #endif
     _file = 0;
   }
+
+  _filesize = 0;
 }
 
 
