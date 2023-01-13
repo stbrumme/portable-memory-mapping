@@ -1,4 +1,4 @@
-add_library(portable-memory-mapping
+add_library(portable-memory-mapping STATIC
     MemoryMapped.cpp
     MemoryMapped.h
 )
