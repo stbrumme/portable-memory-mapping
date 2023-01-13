@@ -30,7 +30,10 @@
 #include <errno.h>
 #include <unistd.h>
 #endif
-
+#if __APPLE__
+#define stat64 stat
+#define fstat64 fstat
+#endif
 
 /// do nothing, must use open()
 MemoryMapped::MemoryMapped()
@@ -118,7 +121,11 @@ bool MemoryMapped::open(const std::string& filename, size_t mappedBytes, CacheHi
   // Linux
 
   // open file
+#ifdef __APPLE__
+  _file = ::open(filename.c_str(), O_RDONLY);
+#else
   _file = ::open(filename.c_str(), O_RDONLY | O_LARGEFILE);
+#endif
   if (_file == -1)
   {
     _file = 0;
@@ -276,9 +283,13 @@ bool MemoryMapped::remap(uint64_t offset, size_t mappedBytes)
 
 #else
 
+#ifdef __APPLE__
+  _mappedView = ::mmap(NULL, mappedBytes, PROT_READ, MAP_SHARED, _file, offset);
+#else
   // Linux
   // new mapping
   _mappedView = ::mmap64(NULL, mappedBytes, PROT_READ, MAP_SHARED, _file, offset);
+#endif
   if (_mappedView == MAP_FAILED)
   {
     _mappedBytes = 0;
